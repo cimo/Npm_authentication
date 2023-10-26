@@ -5,11 +5,19 @@ import * as Interface from "./Interface";
 
 let cookieName = "";
 
-export const setCookieName = (value: string) => {
-    cookieName = value;
+export const generateCookie = (cookieNameValue: string, response: Interface.Iresponse) => {
+    cookieName = cookieNameValue;
+
+    const tokenLength = 64;
+
+    const encrypted = Crypto.randomBytes(tokenLength).toString("hex");
+
+    response.cookie(cookieName, encrypted, { httpOnly: true, secure: true });
+
+    return encrypted;
 };
 
-export const authenticationMiddleware = (request: Interface.Irequest, response: Interface.Iresponse, next: Interface.Inext) => {
+export const authenticationMiddleware = (request: Interface.Irequest, response: Interface.Iresponse, next: Interface.Tnext) => {
     const authorization = request.headers["authorization"] as string | undefined;
     const authentication = request.cookies[cookieName] as string | undefined;
 
@@ -30,14 +38,4 @@ export const authenticationMiddleware = (request: Interface.Irequest, response: 
     }
 
     next();
-};
-
-export const generateCookie = (response: Interface.Iresponse) => {
-    const tokenLength = 64;
-
-    const encrypted = Crypto.randomBytes(tokenLength).toString("hex");
-
-    response.cookie(cookieName, encrypted, { httpOnly: true, secure: true });
-
-    return encrypted;
 };

@@ -23,14 +23,12 @@ import { Ca } from "@cimo/authentication";
 
 ...
 
-Ca.setCookieName("test_authentication");
-
 app.use(CookieParser());
 
 ...
 
 app.get("/login", (_request: Express.Request, response: Express.Response) => {
-    const token = Ca.generateCookie();
+    const token = Ca.generateCookie("ms_at_authentication", response);
 
     response.json({ stdout: token });
 });

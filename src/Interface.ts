@@ -15,4 +15,4 @@ export interface Iresponse {
     cookie(name: string, value: string, options?: Record<string, unknown>): Iresponse;
 }
 
-export type Inext = (error?: Error) => void;
+export type Tnext = (error?: Error) => void;
