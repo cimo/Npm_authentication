@@ -28,13 +28,13 @@ app.use(CookieParser());
 ...
 
 app.get("/login", (_request: Express.Request, response: Express.Response) => {
-    const token = Ca.generateCookie("ms_at_authentication", response);
+    Ca.generateCookie("ms_at_authentication", response);
 
-    response.json({ stdout: token });
+    response.json({ stdout: "Token generated." });
 });
 
 app.get("/profile", Ca.authenticationMiddleware, (_request: Express.Request, response: Express.Response) => {
-    response.json({ stdout: "test authentication." });
+    response.json({ stdout: "Authentication ok." });
 });
 
 ...
