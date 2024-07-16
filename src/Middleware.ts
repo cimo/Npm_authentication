@@ -4,37 +4,50 @@ import * as Crypto from "crypto";
 import * as Interface from "./Interface";
 
 let cookieName = "";
+const cookieTokenList: string[] = [];
 
-export const generateCookie = (cookieNameValue: string, response: Interface.Iresponse) => {
+export const writeCookie = (cookieNameValue: string, response: Interface.Iresponse) => {
     cookieName = cookieNameValue;
 
     const tokenLength = 64;
 
-    const encrypted = Crypto.randomBytes(tokenLength).toString("hex");
+    const token = Crypto.randomBytes(tokenLength).toString("hex");
 
-    response.cookie(cookieName, encrypted, { httpOnly: true, secure: true });
+    cookieTokenList.push(token);
 
-    return encrypted;
+    response.cookie(cookieName, token, { httpOnly: true, secure: true });
 };
 
 export const authenticationMiddleware = (request: Interface.Irequest, response: Interface.Iresponse, next: Interface.Tnext) => {
-    const authorization = request.headers["authorization"] as string | undefined;
-    const authentication = request.cookies[cookieName] as string | undefined;
+    const requestAuthorization = request.headers["authorization"] as string | undefined;
+    const requestCookie = request.cookies[cookieName];
 
-    if (!authorization && (!authentication || authentication.trim() === "")) {
-        return response.status(401).send({ response: { stdout: "", stderr: "Unauthenticated" } });
-    } else if (authorization) {
-        if (authorization && authorization.startsWith("Bearer ")) {
-            if (authorization.substring(7) !== authentication) {
-                return response.status(401).send({ response: { stdout: "", stderr: "Unauthorized" } });
-            }
-        } else if (authorization && authorization.startsWith("Basic ")) {
-            const credentialSplit = Buffer.from(authorization.split(" ")[1], "base64").toString().split(":");
+    if (!requestAuthorization && requestCookie) {
+        let isExists = false;
 
-            if (credentialSplit[0].trim() === "" || credentialSplit[1].trim() === "") {
-                return response.status(401).send({ response: { stdout: "", stderr: "Unauthorized" } });
+        for (const cookieToken of cookieTokenList) {
+            if (requestCookie === cookieToken) {
+                isExists = true;
+
+                break;
             }
         }
+
+        if (!isExists) {
+            return response.status(401).send({ response: { stdout: "", stderr: "Unauthorized cookie." } });
+        }
+    } else if (requestAuthorization && requestAuthorization.startsWith("Bearer ") && requestCookie) {
+        if (requestAuthorization.substring(7) !== requestCookie) {
+            return response.status(401).send({ response: { stdout: "", stderr: "Unauthorized bearer." } });
+        }
+    } else if (requestAuthorization && requestAuthorization.startsWith("Basic ") && !requestCookie) {
+        const credentialSplit = Buffer.from(requestAuthorization.split(" ")[1], "base64").toString().split(":");
+
+        if (credentialSplit[0].trim() === "" || credentialSplit[1].trim() === "") {
+            return response.status(401).send({ response: { stdout: "", stderr: "Unauthorized basic." } });
+        }
+    } else {
+        return response.status(401).send({ response: { stdout: "", stderr: "Request parameter missing." } });
     }
 
     next();
