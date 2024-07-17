@@ -34,14 +34,20 @@ app.use(CookieParser());
 
 ...
 
-app.get("/login", (_request: Express.Request, response: Express.Response) => {
-    Ca.writeCookie("ms_at_authentication", response);
+app.get("/login", (_, response: Express.Response) => {
+    Ca.writeCookie("xxx_authentication", response);
 
-    response.json({ stdout: "Token generated." });
+    response.json({ stdout: "Token created." });
 });
 
-app.get("/profile", Ca.authenticationMiddleware, (_request: Express.Request, response: Express.Response) => {
+app.get("/profile", Ca.authenticationMiddleware, (_, response: Express.Response) => {
     response.json({ stdout: "Authentication ok." });
+});
+
+app.get("/logout", (request: Express.Request, response: Express.Response) => {
+    Ca.removeCookie("xxx_authentication", request, response);
+
+    response.json({ stdout: "Token removed." });
 });
 
 ...

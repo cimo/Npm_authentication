@@ -1,12 +1,12 @@
 import * as Crypto from "crypto";
 
 // Source
-import * as Interface from "./Interface";
+import * as Model from "./Model";
 
 let cookieName = "";
 const cookieTokenList: string[] = [];
 
-export const writeCookie = (cookieNameValue: string, response: Interface.Iresponse) => {
+export const writeCookie = (cookieNameValue: string, response: Model.Iresponse): void => {
     cookieName = cookieNameValue;
 
     const tokenLength = 64;
@@ -18,7 +18,22 @@ export const writeCookie = (cookieNameValue: string, response: Interface.Irespon
     response.cookie(cookieName, token, { httpOnly: true, secure: true });
 };
 
-export const authenticationMiddleware = (request: Interface.Irequest, response: Interface.Iresponse, next: Interface.Tnext) => {
+export const removeCookie = (cookieName: string, request: Model.Irequest, response: Model.Iresponse): void => {
+    const requestCookie = request.cookies[cookieName];
+
+    if (requestCookie) {
+        for (let a = 0; a < cookieTokenList.length; a++) {
+            if (cookieTokenList[a] === requestCookie) {
+                cookieTokenList.splice(a, 1);
+                a--;
+            }
+        }
+
+        response.cookie(cookieName, "", { expires: new Date(0) });
+    }
+};
+
+export const authenticationMiddleware = (request: Model.Irequest, response: Model.Iresponse, next: Model.Tnext): Model.Iresponse | undefined => {
     const requestAuthorization = request.headers["authorization"] as string | undefined;
     const requestCookie = request.cookies[cookieName];
 
