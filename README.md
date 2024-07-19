@@ -1,7 +1,7 @@
 # Authentication
 
 Authentication middleware. Light, fast and secure.
-Write with native Typescript code and no dependencies is used.
+Writed with native Typescript code and no dependencies are used.
 
 ## Pack
 
