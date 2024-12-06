@@ -1,6 +1,6 @@
 {
     "name": "@cimo/authentication",
-    "version": "1.1.12",
+    "version": "1.1.13",
     "description": "Authentication middleware. Light, fast and secure.",
     "author": "cimo",
     "license": "MIT",
@@ -33,9 +33,8 @@
     "keywords": [
         "authentication",
         "middleware",
-        "authentication middleware",
-        "nodejs",
         "express",
+        "nodejs",
         "typescript",
         "cimo",
         "native",

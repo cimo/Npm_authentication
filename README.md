@@ -1,6 +1,6 @@
 # Authentication
 
-Authentication middleware. Light, fast and secure.
+Npm package, authentication middleware. Light, fast and secure.
 Writed with native Typescript code and no dependencies are used.
 
 ## Pack
