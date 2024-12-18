@@ -68,7 +68,7 @@ export const authenticationMiddleware = (request: Model.Irequest, response: Mode
             return;
         }
     } else {
-        response.status(401).send({ response: { stdout: "", stderr: "Request parameter missing." } });
+        response.status(401).send({ response: { stdout: "", stderr: "Require authorization." } });
 
         return;
     }
