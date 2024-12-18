@@ -33,7 +33,7 @@ export const removeCookie = (cookieName: string, request: Model.Irequest, respon
     }
 };
 
-export const authenticationMiddleware = (request: Model.Irequest, response: Model.Iresponse, next: Model.Tnext): Model.Iresponse | undefined => {
+export const authenticationMiddleware = (request: Model.Irequest, response: Model.Iresponse, next: Model.Tnext): void => {
     const requestAuthorization = request.headers["authorization"] as string | undefined;
     const requestCookie = request.cookies[cookieName];
 
@@ -49,20 +49,28 @@ export const authenticationMiddleware = (request: Model.Irequest, response: Mode
         }
 
         if (!isExists) {
-            return response.status(401).send({ response: { stdout: "", stderr: "Unauthorized cookie." } });
+            response.status(401).send({ response: { stdout: "", stderr: "Unauthorized cookie." } });
+
+            return;
         }
     } else if (requestAuthorization && requestAuthorization.startsWith("Bearer ") && requestCookie) {
         if (requestAuthorization.substring(7) !== requestCookie) {
-            return response.status(401).send({ response: { stdout: "", stderr: "Unauthorized bearer." } });
+            response.status(401).send({ response: { stdout: "", stderr: "Unauthorized bearer." } });
+
+            return;
         }
     } else if (requestAuthorization && requestAuthorization.startsWith("Basic ") && !requestCookie) {
         const credentialSplit = Buffer.from(requestAuthorization.split(" ")[1], "base64").toString().split(":");
 
         if (credentialSplit[0].trim() === "" || credentialSplit[1].trim() === "") {
-            return response.status(401).send({ response: { stdout: "", stderr: "Unauthorized basic." } });
+            response.status(401).send({ response: { stdout: "", stderr: "Unauthorized basic." } });
+
+            return;
         }
     } else {
-        return response.status(401).send({ response: { stdout: "", stderr: "Request parameter missing." } });
+        response.status(401).send({ response: { stdout: "", stderr: "Request parameter missing." } });
+
+        return;
     }
 
     next();
