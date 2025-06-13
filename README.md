@@ -1,4 +1,4 @@
-# Authentication
+# Npm_authentication
 
 Npm package, authentication middleware. Light, fast and secure.
 Writed with native Typescript code and no dependencies are used.
