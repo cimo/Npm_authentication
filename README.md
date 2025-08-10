@@ -26,7 +26,7 @@ Writed with native Typescript code and no dependencies are used.
 ```
 ...
 
-import { Ca } from "@cimo/authentication";
+import { Ca } from "@cimo/authentication/dist/src/Main";
 
 ...
 
