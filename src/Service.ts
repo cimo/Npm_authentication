@@ -22,10 +22,9 @@ export const removeCookie = (cookieName: string, request: Model.Irequest, respon
     const requestCookie = request.cookies[cookieName];
 
     if (requestCookie) {
-        for (let a = 0; a < cookieTokenList.length; a++) {
+        for (let a = cookieTokenList.length - 1; a >= 0; a--) {
             if (cookieTokenList[a] === requestCookie) {
                 cookieTokenList.splice(a, 1);
-                a--;
             }
         }
 
@@ -33,7 +32,7 @@ export const removeCookie = (cookieName: string, request: Model.Irequest, respon
     }
 };
 
-export const authenticationMiddleware = (request: Model.Irequest, response: Model.Iresponse, next: Model.Tnext): void => {
+export const authenticationMiddleware = (request: Model.Irequest, response: Model.Iresponse, next: (error?: Error) => void): void => {
     const requestAuthorization = request.headers["authorization"] as string | undefined;
     const requestCookie = request.cookies[cookieName];
 
