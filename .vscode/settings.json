@@ -1,9 +1,9 @@
 {
     "l13Diff.exclude": [
         ".git",
+        "build",
         "dist",
-        "node_modules",
-        "kubernetes"
+        "node_modules"
     ],
     "l13Diff.ignoreEndOfLine": false,
     "l13Diff.ignoreTrimWhitespace": "default",
