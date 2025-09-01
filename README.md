@@ -44,7 +44,7 @@ app.get("/profile", Ca.authenticationMiddleware, (_, response: Express.Response)
     response.json({ stdout: "Authentication ok." });
 });
 
-app.get("/logout", (request: Express.Request, response: Express.Response) => {
+app.get("/logout", Ca.authenticationMiddleware, (request: Express.Request, response: Express.Response) => {
     Ca.removeCookie("xxx_authentication", request, response);
 
     response.json({ stdout: "Token removed." });
