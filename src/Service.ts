@@ -1,7 +1,7 @@
 import * as Crypto from "crypto";
 
 // Source
-import * as model from "./Model";
+import * as model from "./Model.js";
 
 let cookieName = "";
 const cookieTokenList: string[] = [];

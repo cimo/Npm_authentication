@@ -1,2 +1,2 @@
-export * as CaModel from "./Model";
-export * as Ca from "./Service";
+export * as CaModel from "./Model.js";
+export * as Ca from "./Service.js";
