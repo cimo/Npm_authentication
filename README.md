@@ -51,5 +51,4 @@ app.get("/logout", Ca.authenticationMiddleware, (request: Express.Request, respo
 });
 
 ...
-
 ```
