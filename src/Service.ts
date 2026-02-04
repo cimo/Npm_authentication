@@ -52,8 +52,10 @@ export const authenticationMiddleware = (request: model.Irequest, response: mode
 
             return;
         }
-    } else if (requestAuthorization && requestAuthorization.startsWith("Bearer ") && requestCookie) {
-        if (requestAuthorization.substring(7) !== requestCookie) {
+    } else if (requestAuthorization && requestAuthorization.startsWith("Bearer ")) {
+        const token = requestAuthorization.substring(7).trim();
+
+        if (!token) {
             response.status(401).send({ response: { stdout: "", stderr: "Unauthorized bearer." } });
 
             return;
