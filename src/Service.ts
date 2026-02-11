@@ -33,7 +33,7 @@ export const removeCookie = (cookieName: string, request: model.Irequest, respon
 };
 
 export const authenticationMiddleware = (request: model.Irequest, response: model.Iresponse, next: (error?: Error) => void): void => {
-    const requestAuthorization = request.headers["authorization"] as string | undefined;
+    const requestAuthorization = request.headers["authorization"] as string;
     const requestCookie = request.cookies[cookieName];
 
     if (!requestAuthorization && requestCookie) {
