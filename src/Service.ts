@@ -33,7 +33,7 @@ export const removeCookie = (cookieName: string, request: model.Irequest, respon
 };
 
 export const authenticationMiddleware = (request: model.Irequest, response: model.Iresponse, next: (error?: Error) => void): void => {
-    const requestAuthorization = request.headers["authorization"] as string;
+    const requestAuthorization = request.headers["authorization"];
     const requestCookie = request.cookies[cookieName];
 
     if (!requestAuthorization && requestCookie) {
@@ -52,7 +52,7 @@ export const authenticationMiddleware = (request: model.Irequest, response: mode
 
             return;
         }
-    } else if (requestAuthorization && requestAuthorization.startsWith("Bearer ")) {
+    } else if (typeof requestAuthorization === "string" && requestAuthorization.startsWith("Bearer ")) {
         const token = requestAuthorization.substring(7).trim();
 
         if (!token) {
@@ -60,7 +60,7 @@ export const authenticationMiddleware = (request: model.Irequest, response: mode
 
             return;
         }
-    } else if (requestAuthorization && requestAuthorization.startsWith("Basic ") && !requestCookie) {
+    } else if (typeof requestAuthorization === "string" && requestAuthorization.startsWith("Basic ")) {
         const credentialSplit = Buffer.from(requestAuthorization.split(" ")[1], "base64").toString().split(":");
 
         if (credentialSplit[0].trim() === "" || credentialSplit[1].trim() === "") {
