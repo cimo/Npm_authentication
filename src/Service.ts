@@ -18,7 +18,7 @@ export const writeCookie = (cookieNameValue: string, response: model.Iresponse):
     response.cookie(cookieName, token, { httpOnly: true, secure: true });
 };
 
-export const removeCookie = (cookieName: string, request: model.Irequest, response: model.Iresponse): void => {
+export const deleteCookie = (cookieName: string, request: model.Irequest, response: model.Iresponse): void => {
     const requestCookie = request.cookies[cookieName];
 
     if (requestCookie) {
