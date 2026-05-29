@@ -24,6 +24,8 @@ import { Ca } from "@cimo/authentication/dist/src/Main";
 
 ...
 
+Ca.setCookieNameCustom("xxx-cookie"); // If used support custom cookie namo too.
+
 app.use(CookieParser());
 
 ...

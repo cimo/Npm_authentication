@@ -4,7 +4,12 @@ import * as Crypto from "crypto";
 import * as model from "./Model.js";
 
 let cookieName = "";
+let cookieNameCustom = "";
 const cookieTokenList: string[] = [];
+
+export const setCookieNameCustom = (value: string): void => {
+    cookieNameCustom = value;
+};
 
 export const writeCookie = (cookieNameValue: string, response: model.Iresponse): void => {
     cookieName = cookieNameValue;
@@ -33,14 +38,27 @@ export const deleteCookie = (cookieName: string, request: model.Irequest, respon
 };
 
 export const authenticationMiddleware = (request: model.Irequest, response: model.Iresponse, next: (error?: Error) => void): void => {
-    const requestAuthorization = request.headers["authorization"] as string;
-    const requestCookie = request.cookies[cookieName] as string;
+    const requestAuthorization = request.headers["authorization"];
+    const requestCookie = request.cookies[cookieName];
+    const requestCookieCustom = cookieNameCustom ? request.headers[cookieNameCustom] : undefined;
 
-    if (requestAuthorization === "" && requestCookie !== "") {
+    let cookieCustom = "";
+
+    if (typeof requestCookieCustom === "string") {
+        const requestCookieCustomSplit = requestCookieCustom.split(";")[0];
+
+        cookieCustom = requestCookieCustomSplit.includes("=") ? requestCookieCustomSplit.split("=")[1].trim() : requestCookieCustomSplit.trim();
+    }
+
+    const cookieValue = requestCookie || cookieCustom;
+
+    if (!requestAuthorization && cookieValue) {
         let isExists = false;
 
-        for (const cookieToken of cookieTokenList) {
-            if (requestCookie === cookieToken) {
+        for (let a = 0; a < cookieTokenList.length; a++) {
+            const cookieToken = cookieTokenList[a];
+
+            if (cookieValue === cookieToken) {
                 isExists = true;
 
                 break;
@@ -63,7 +81,7 @@ export const authenticationMiddleware = (request: model.Irequest, response: mode
     } else if (typeof requestAuthorization === "string" && requestAuthorization.startsWith("Basic ")) {
         const credentialSplit = Buffer.from(requestAuthorization.split(" ")[1], "base64").toString().split(":");
 
-        if (credentialSplit[0].trim() === "" || credentialSplit[1].trim() === "") {
+        if (credentialSplit.length < 2 || credentialSplit[0].trim() === "" || credentialSplit[1].trim() === "") {
             response.status(401).send({ response: { stdout: "", stderr: "Unauthorized basic." } });
 
             return;
