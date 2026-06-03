@@ -24,11 +24,11 @@ export const writeCookie = (cookieNameValue: string, response: model.Iresponse):
 };
 
 export const deleteCookie = (cookieName: string, request: model.Irequest, response: model.Iresponse): void => {
-    const requestCookie = request.cookies[cookieName];
+    const cookie = request.cookies[cookieName];
 
-    if (requestCookie) {
+    if (cookie) {
         for (let a = cookieTokenList.length - 1; a >= 0; a--) {
-            if (cookieTokenList[a] === requestCookie) {
+            if (cookieTokenList[a] === cookie) {
                 cookieTokenList.splice(a, 1);
             }
         }
@@ -38,21 +38,21 @@ export const deleteCookie = (cookieName: string, request: model.Irequest, respon
 };
 
 export const authenticationMiddleware = (request: model.Irequest, response: model.Iresponse, next: (error?: Error) => void): void => {
-    const requestAuthorization = request.headers["authorization"];
-    const requestCookie = request.cookies[cookieName];
-    const requestCookieCustom = cookieNameCustom ? request.headers[cookieNameCustom] : undefined;
+    const authorization = request.headers["authorization"];
+    const cookie = request.cookies[cookieName];
+    const cookieCustom = cookieNameCustom ? request.headers[cookieNameCustom] : undefined;
 
-    let cookieCustom = "";
+    let cookieCustomValue = "";
 
-    if (typeof requestCookieCustom === "string") {
-        const requestCookieCustomSplit = requestCookieCustom.split(";")[0];
+    if (typeof cookieCustom === "string") {
+        const requestCookieCustomSplit = cookieCustom.split(";")[0];
 
-        cookieCustom = requestCookieCustomSplit.includes("=") ? requestCookieCustomSplit.split("=")[1].trim() : requestCookieCustomSplit.trim();
+        cookieCustomValue = requestCookieCustomSplit.includes("=") ? requestCookieCustomSplit.split("=")[1].trim() : requestCookieCustomSplit.trim();
     }
 
-    const cookieValue = requestCookie || cookieCustom;
+    const cookieValue = cookie || cookieCustomValue;
 
-    if (!requestAuthorization && cookieValue) {
+    if (!authorization && cookieValue) {
         let isExists = false;
 
         for (let a = 0; a < cookieTokenList.length; a++) {
@@ -70,16 +70,16 @@ export const authenticationMiddleware = (request: model.Irequest, response: mode
 
             return;
         }
-    } else if (typeof requestAuthorization === "string" && requestAuthorization.startsWith("Bearer ")) {
-        const token = requestAuthorization.substring(7).trim();
+    } else if (typeof authorization === "string" && authorization.startsWith("Bearer ")) {
+        const token = authorization.substring(7).trim();
 
         if (!token) {
             response.status(401).send({ response: { stdout: "", stderr: "Unauthorized bearer." } });
 
             return;
         }
-    } else if (typeof requestAuthorization === "string" && requestAuthorization.startsWith("Basic ")) {
-        const credentialSplit = Buffer.from(requestAuthorization.split(" ")[1], "base64").toString().split(":");
+    } else if (typeof authorization === "string" && authorization.startsWith("Basic ")) {
+        const credentialSplit = Buffer.from(authorization.split(" ")[1], "base64").toString().split(":");
 
         if (credentialSplit.length < 2 || credentialSplit[0].trim() === "" || credentialSplit[1].trim() === "") {
             response.status(401).send({ response: { stdout: "", stderr: "Unauthorized basic." } });
