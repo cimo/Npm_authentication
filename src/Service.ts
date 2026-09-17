@@ -52,7 +52,7 @@ export const authenticationMiddleware = (request: model.Irequest, response: mode
 
     const cookieValue = cookie || cookieCustomValue;
 
-    if (!authorization && cookieValue) {
+    if (cookieValue) {
         let isExists = false;
 
         for (let a = 0; a < cookieTokenList.length; a++) {
@@ -67,6 +67,14 @@ export const authenticationMiddleware = (request: model.Irequest, response: mode
 
         if (!isExists) {
             response.status(401).send({ response: { stdout: "", stderr: "Unauthorized cookie." } });
+
+            return;
+        }
+    }
+
+    if (!authorization) {
+        if (!cookieValue) {
+            response.status(401).send({ response: { stdout: "", stderr: "Require authorization." } });
 
             return;
         }

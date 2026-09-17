@@ -30,7 +30,7 @@ import { Ca } from "@cimo/authentication/dist/src/Main";
 
 ...
 
-Ca.setCookieNameCustom("xxx-cookie"); // If used support custom cookie namo too.
+Ca.setCookieNameCustom("xxx-cookie"); // Support custom cookie name too.
 
 app.use(CookieParser());
 
